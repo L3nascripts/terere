@@ -22,7 +22,7 @@
 1. Certifique-se de ter o Python 3 instalado.
 2. Mantenha os arquivos modulares (`main.py`, `interface.py`, `modelos.py`, `config.py`, `utilitarios.py`) no mesmo diretório, juntamente com o arquivo de banco de dados `.csv` e o ícone `terere.png`.
 3. Execute o comando no terminal:
-`python main.py`
+`python3 main.py`
 
 ---
 
@@ -44,7 +44,7 @@
 1. Asegúrese de tener Python 3 instalado.
 2. Mantenga los archivos modulares (`main.py`, `interface.py`, `modelos.py`, `config.py`, `utilitarios.py`) en el mismo directorio, junto con el archivo de base de datos `.csv` y el icono `terere.png`.
 3. Ejecute el comando en la terminal:
-`python main.py`
+`python3 main.py`
 
 ---
 
@@ -66,4 +66,4 @@
 1. Emaña oĩha Python 3 nde komputadórape.
 2. Emoĩ umi vore (`main.py`, `interface.py`, `modelos.py`, `config.py`, `utilitarios.py`) peteĩ ryrupe, oĩháme pe `.csv` ha pe ra'ãnga `terere.png`.
 3. Emoñepyrũ terminal-pe:
-`python main.py`
+`python3 main.py`
