@@ -1,0 +1,2 @@
+# terere
+Guarani study app
