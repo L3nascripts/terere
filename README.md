@@ -1,6 +1,6 @@
 # Terere 🧉
 
-[ 🇧🇷 Português ] | [ 🇪🇸 Español ] | [ 🇵🇾 Guarani 🇧🇴]
+[ 🇧🇷 Português ] | [ 🇨🇱 Español ] | [ 🇵🇾 Guarani 🇧🇴]
 
 ---
 
@@ -26,7 +26,7 @@
 
 ---
 
-## 🇪🇸 Español
+## 🇨🇱 Español
 
 **Terere** es una aplicación de escritorio de código abierto desarrollada en Python (Tkinter) enfocada en el aprendizaje, análisis morfológico y práctica del idioma Guaraní.
 
