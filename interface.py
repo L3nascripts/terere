@@ -8,6 +8,7 @@ from typing import Optional, Callable
 import config
 from modelos import DicionarioManager, PerfilManager, GramaticaGuarani
 
+
 class TelaLogin:
     def __init__(self, root: tk.Tk, on_login_success: Callable[[Optional[str]], None]):
         self.root = root
@@ -59,6 +60,10 @@ class TelaLogin:
         self.btn_guest = tk.Button(self.frame, textvariable=self.var_btn_guest, font=("Helvetica", 10), width=22, command=lambda: self.finalizar_login(None))
         self.btn_guest.pack(pady=(25, 10))
 
+        self.var_dev_by = tk.StringVar()
+        self.lbl_dev_by = tk.Label(self.frame, textvariable=self.var_dev_by, font=("Helvetica", 8))
+        self.lbl_dev_by.pack(side="bottom", anchor="se", padx=10, pady=10)
+
         self.aplicar_tema()
         self.mudar_idioma(config.GerenciadorIdiomas.idioma_ativo)
 
@@ -77,6 +82,7 @@ class TelaLogin:
         self.var_btn_new.set(t["login_btn_new"])
         self.var_btn_guest.set(t["login_btn_guest"])
         self.var_btn_theme.set(t.get("btn_theme", "Tema"))
+        self.var_dev_by.set(t.get("dev_by", "Desenvolvido por L3nascripts"))
 
     def aplicar_tema(self):
         cores = config.GerenciadorTemas.get()
@@ -144,6 +150,9 @@ class TerereApp:
         ttk.Button(frame_top, textvariable=self.vars_textos["btn_theme"], command=self.alternar_tema).pack(side="right", padx=5)
 
         self.construir_teclado_inteligente()
+
+        self.lbl_dev_by = ttk.Label(self.frame_principal, textvariable=self.vars_textos["dev_by"], font=("Helvetica", 8))
+        self.lbl_dev_by.pack(side="bottom", anchor="e", padx=10, pady=5)
 
         self.abas = ttk.Notebook(self.frame_principal)
         self.aba_perfil = ttk.Frame(self.abas)
