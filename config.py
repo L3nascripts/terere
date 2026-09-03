@@ -7,7 +7,7 @@ class GerenciadorTemas:
             "fg": "#4A3B3C",        # Texto: Marrom escuro acinzentado (tronco do Tajy)
             "input_bg": "#FFFFFF",  # Entradas: Branco puro para manter a legibilidade
             "btn_bg": "#F0D8DE",    # Botões inativos: Rosa suave
-            "accent": "#D81B60",    # Destaque: Rosa/Magenta vibrante da flor do Tajy
+            "accent": "#D81B60",    # Destaque: Rosa/Magenta da flor do Tajy
             "err": "#E53935",       # Erro: Vermelho vivo para contrastar
             "btn_fg": "#FFFFFF"     # Texto dos botões de destaque: Branco
         },
@@ -37,6 +37,7 @@ class GerenciadorIdiomas:
     
     TEXTOS = {
         "pt": {
+            "dev_by": "Desenvolvido por L3nascripts",
             "login_title": "Terere - Estudo de Guarani 🧉",
             "login_sub": "Selecione ou crie um perfil para salvar seu progresso:",
             "login_btn_enter": "Entrar com Perfil",
@@ -89,6 +90,7 @@ class GerenciadorIdiomas:
    - Exemplo: Che vare'a (Estou com fome); Nde porã (Você é bonito/a)."""
         },
         "es": {
+            "dev_by": "Desarrollado por L3nascripts",
             "login_title": "Terere - Estudio de Guaraní 🧉",
             "login_sub": "Seleccione o cree un perfil para guardar su progreso:",
             "login_btn_enter": "Entrar con Perfil",
@@ -141,6 +143,7 @@ class GerenciadorIdiomas:
    - Ejemplo: Che vare'a (Estoy con hambre); Nde porã (Eres lindo/a)."""
         },
         "gn": {
+            "dev_by": "Ojapóva L3nascripts",
             "login_title": "Terere - Ñe'ẽkuaaty Rembipuru 🧉",
             "login_sub": "Eiporavo térã eikytĩ peteĩ ava ñongatu haguã:",
             "login_btn_enter": "Eike Ava Ndive",
@@ -186,7 +189,7 @@ class GerenciadorIdiomas:
 1. Ysaja Areal (Tembiapo): Ohechauka tembiapo tee. Oipuru ñe'ẽpehẽngue a-, re-, o-, ja-/ña-, ro-, pe-. 
    - Techapyrã: aguata.
 
-2. Ysaja Aireal (Tembiapo "i" ndive): Ysaja Areal joguaha, hakatu ojerure pu'ae "i" ñe'ẽpehẽnguépe: ai-, rei-, oi-, jai-/ñai-, roi-, pei-. 
+2. Ysaja Aireal (Tembiapo "i" ndive): Ysaja Areal joguaha, hakatu ojerure pu'ae "i" ñe'ẽpehẽnguépe: ai-, rei-, oi-, jai-, ñai-, roi-, pei-. 
    - Techapyrã: aipota.
 
 3. Ysaja Chendal (Teroja Ñe'ẽtéva): Ndoipurúi ñe'ẽte mojoajuha ("ser/estar" karaiñe'ẽme). Terarangue oñembojoaju terojare: che, nde/ne, i/iñ, ñande/ñane, ore, pende/pene. 
