@@ -1,6 +1,6 @@
 # Terere 🧉
 
-[ 🇧🇷 Português ] | [ 🇪🇸 Español ] | [ 🇵🇾 Guarani ]
+[ 🇧🇷 Português ] | [ 🇪🇸 Español ] | [ 🇵🇾 Guarani 🇧🇴]
 
 ---
 
