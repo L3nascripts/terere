@@ -48,7 +48,7 @@
 
 ---
 
-## 🇵🇾 Guarani
+## 🇵🇾 Guarani 🇧🇴
 
 **Terere** ha'e peteĩ tembipuru komputadóra pe guarã ijypykuéva ijeheguíva, ojejapóva Python (Tkinter) rupive. Oñembosako'i ñañemoarandu, ñaha'ã ha ñamohesakã hag̃ua avañe'ẽ.
 
