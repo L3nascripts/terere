@@ -279,6 +279,25 @@ class TerereApp:
                 self.tab_conj.heading("passado", text=t.get("col_past", "Passado"))
                 self.tab_conj.heading("futuro", text=t.get("col_future", "Futuro"))
             
+        if hasattr(self, 'var_dic_lang'):
+            if idioma == "pt":
+                self.var_dic_lang.set("pt")
+                if hasattr(self, 'frame_quiz_lang'): self.frame_quiz_lang.pack_forget()
+            elif idioma == "es":
+                self.var_dic_lang.set("es")
+                if hasattr(self, 'frame_quiz_lang'): self.frame_quiz_lang.pack_forget()
+            elif idioma == "gn":
+                if hasattr(self, 'frame_quiz_lang') and hasattr(self, 'lbl_quiz_palavra'):
+                    self.frame_quiz_lang.pack(pady=5, before=self.lbl_quiz_palavra)
+                
+                # NOVO: Garante que o título do quiz acompanhe o dicionário selecionado
+                if self.var_dic_lang.get() == "pt":
+                    self.vars_textos["quiz_title"].set("Mba'éichapa poytugañe'ẽme?")
+                else:
+                    self.vars_textos["quiz_title"].set("Mba'éichapa karaiñe'ẽme?")
+            
+            self.dicionario.carregar(self.var_dic_lang.get())
+            
             if hasattr(self, 'tab_dic'):
                 self.tab_dic.heading("gn", text=t.get("col_gn", "Guarani"))
                 nome_col_trad = t.get("col_es", "Tradução") if self.var_dic_lang.get() == "es" else t.get("col_pt", "Português")
@@ -292,13 +311,12 @@ class TerereApp:
             self.caixa_texto_guia.insert(tk.END, t.get("guide_text", ""))
             self.caixa_texto_guia.config(state="disabled")
             
-        if hasattr(self, 'var_dic_lang'):
-            self.dicionario.carregar(self.var_dic_lang.get())
-            
         self.buscar_dicionario()
         self.atualizar_contadores()
         self.atualizar_ui_perfil()
-        if hasattr(self, 'lbl_quiz_score'): self.atualizar_placar_quiz()
+        if hasattr(self, 'lbl_quiz_score'): 
+            self.atualizar_placar_quiz()
+            self.gerar_pergunta_quiz()
 
     def construir_aba_perfil(self):
         ttk.Label(self.aba_perfil, textvariable=self.vars_textos["prof_title"], style="Titulo.TLabel").pack(pady=20)
@@ -520,6 +538,13 @@ class TerereApp:
         nome_coluna = t.get("col_es", "Tradução") if idioma_alvo == "es" else t.get("col_pt", "Português")
         self.tab_dic.heading("es", text=nome_coluna)
         
+        # NOVO: Atualiza o título dinamicamente quando a opção do Radiobutton muda
+        if config.GerenciadorIdiomas.idioma_ativo == "gn":
+            if idioma_alvo == "pt":
+                self.vars_textos["quiz_title"].set("Mba'éichapa poytugañe'ẽme?")
+            else:
+                self.vars_textos["quiz_title"].set("Mba'éichapa karaiñe'ẽme?")
+        
         if hasattr(self, 'lbl_quiz_score'):
             self.gerar_pergunta_quiz()
 
@@ -593,6 +618,15 @@ class TerereApp:
 
     def construir_aba_quiz(self):
         ttk.Label(self.aba_quiz, textvariable=self.vars_textos["quiz_title"], style="Titulo.TLabel").pack(pady=(25, 10))
+        
+        self.frame_quiz_lang = ttk.Frame(self.aba_quiz)
+        ttk.Label(self.frame_quiz_lang, textvariable=self.vars_textos["lbl_base_estudo"]).pack(side="left", padx=5)
+        ttk.Radiobutton(self.frame_quiz_lang, textvariable=self.vars_textos["rad_gn_pt"], variable=self.var_dic_lang, value="pt", command=self.trocar_dicionario).pack(side="left", padx=5)
+        ttk.Radiobutton(self.frame_quiz_lang, textvariable=self.vars_textos["rad_gn_es"], variable=self.var_dic_lang, value="es", command=self.trocar_dicionario).pack(side="left", padx=5)
+        
+        if config.GerenciadorIdiomas.idioma_ativo == "gn":
+            self.frame_quiz_lang.pack(pady=5)
+            
         self.lbl_quiz_palavra = ttk.Label(self.aba_quiz, style="Destacado.TLabel")
         self.lbl_quiz_palavra.pack(pady=10)
         
@@ -633,18 +667,32 @@ class TerereApp:
             
         self.palavra_atual_quiz = random.choices(palavras_validas, weights=pesos, k=1)[0]
         dados_palavra = self.dicionario.palavras[self.palavra_atual_quiz]
-        trad_correta = dados_palavra["traduccion"]
         
-        opcoes = [trad_correta]
-        while len(opcoes) < 4:
-            errada = self.dicionario.palavras[random.choice(palavras_validas)]["traduccion"]
-            if errada not in opcoes: opcoes.append(errada)
+        is_gn_interface = (config.GerenciadorIdiomas.idioma_ativo == "gn")
+        
+        if is_gn_interface:
+            termo_exibido = dados_palavra["traduccion"]
+            trad_correta = self.palavra_atual_quiz
+            exemplo = dados_palavra.get("ex_pt", "")
+            
+            opcoes = [trad_correta]
+            while len(opcoes) < 4:
+                errada = random.choice(palavras_validas)
+                if errada not in opcoes: opcoes.append(errada)
+        else:
+            termo_exibido = self.palavra_atual_quiz
+            trad_correta = dados_palavra["traduccion"]
+            exemplo = dados_palavra.get("ex_gn", "")
+            
+            opcoes = [trad_correta]
+            while len(opcoes) < 4:
+                errada = self.dicionario.palavras[random.choice(palavras_validas)]["traduccion"]
+                if errada not in opcoes: opcoes.append(errada)
             
         random.shuffle(opcoes)
         self.resposta_correta_quiz = opcoes.index(trad_correta)
         
-        self.lbl_quiz_palavra.config(text=self.palavra_atual_quiz.upper())
-        exemplo = dados_palavra.get("ex_gn", "")
+        self.lbl_quiz_palavra.config(text=termo_exibido.upper())
         self.lbl_quiz_exemplo.config(text=f'"{exemplo}"' if exemplo else "")
         
         t = config.GerenciadorTemas.get()
