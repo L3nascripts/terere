@@ -30,9 +30,11 @@ class TelaLogin:
         self.btn_theme = tk.Button(frame_top, textvariable=self.var_btn_theme, command=self.alternar_tema)
         self.btn_theme.pack(side="left", padx=5)
 
+        # Dicionário para armazenar as referências dos botões de idioma
+        self.botoes_lang = {}
         for lang in ["pt", "es", "gn"]:
             btn = tk.Button(frame_top, text=lang.upper(), command=lambda l=lang: self.mudar_idioma(l), width=4)
-            btn.pack(side="right", padx=2)
+            self.botoes_lang[lang] = btn
 
         self.lbl_title = tk.Label(self.frame, textvariable=self.var_title, font=("Trebuchet MS", 22, "bold"))
         self.lbl_title.pack(pady=(20, 15))
@@ -83,6 +85,26 @@ class TelaLogin:
         self.var_btn_guest.set(t["login_btn_guest"])
         self.var_btn_theme.set(t.get("btn_theme", "Tema"))
         self.var_dev_by.set(t.get("dev_by", "Desenvolvido por L3nascripts"))
+        
+        # Chama a reordenação dos botões de idioma
+        self.ordenar_botoes_idioma()
+
+    def ordenar_botoes_idioma(self):
+        # Ordem alfabética baseada na tradução dos nomes dos idiomas
+        ordem = {
+            "pt": ["es", "gn", "pt"], # Espanhol, Guarani, Português
+            "es": ["es", "gn", "pt"], # Español, Guaraní, Portugués
+            "gn": ["gn", "es", "pt"]  # Avañe'ẽ, Karaiñe'ẽ, Poytugañe'ẽ
+        }
+        idioma_atual = config.GerenciadorIdiomas.idioma_ativo
+        
+        # Remove todos da interface temporariamente
+        for lang in ["pt", "es", "gn"]:
+            self.botoes_lang[lang].pack_forget()
+        
+        # Como estão ancorados à direita, empacotamos na ordem reversa para que a esquerda-direita visual fique correta
+        for lang in reversed(ordem[idioma_atual]):
+            self.botoes_lang[lang].pack(side="right", padx=2)
 
     def aplicar_tema(self):
         cores = config.GerenciadorTemas.get()
@@ -144,9 +166,14 @@ class TerereApp:
         frame_top.pack(fill="x", padx=10, pady=(10, 5))
         
         ttk.Label(frame_top, textvariable=self.vars_textos["lbl_lang"], font=("Helvetica", 11, "bold")).pack(side="left", padx=(0,5))
-        for lang in ["pt", "es", "gn"]:
-            ttk.Button(frame_top, text=lang.upper(), command=lambda l=lang: self.mudar_idioma(l), width=4).pack(side="left", padx=2)
         
+        # Dicionário para armazenar as referências dos botões de idioma
+        self.botoes_lang = {}
+        for lang in ["pt", "es", "gn"]:
+            btn = ttk.Button(frame_top, text=lang.upper(), command=lambda l=lang: self.mudar_idioma(l), width=4)
+            self.botoes_lang[lang] = btn
+        
+        ttk.Button(frame_top, textvariable=self.vars_textos["tab_profile"], command=self.abrir_janela_perfil).pack(side="right", padx=5)
         ttk.Button(frame_top, textvariable=self.vars_textos["btn_theme"], command=self.alternar_tema).pack(side="right", padx=5)
 
         self.construir_teclado_inteligente()
@@ -155,24 +182,23 @@ class TerereApp:
         self.lbl_dev_by.pack(side="bottom", anchor="e", padx=10, pady=5)
 
         self.abas = ttk.Notebook(self.frame_principal)
-        self.aba_perfil = ttk.Frame(self.abas)
-        self.aba_lab = ttk.Frame(self.abas)
-        self.aba_dicionario = ttk.Frame(self.abas)
-        self.aba_quiz = ttk.Frame(self.abas)
-        self.aba_guia = ttk.Frame(self.abas)
         
-        self.abas.add(self.aba_perfil, text="Perfil") 
-        self.abas.add(self.aba_lab, text="Laboratório")
+        self.aba_dicionario = ttk.Frame(self.abas)
+        self.aba_guia = ttk.Frame(self.abas)
+        self.aba_lab = ttk.Frame(self.abas)
+        self.aba_quiz = ttk.Frame(self.abas)
+        
         self.abas.add(self.aba_dicionario, text="Dicionário")
-        self.abas.add(self.aba_quiz, text="Praticar")
         self.abas.add(self.aba_guia, text="Guia Prático")
+        self.abas.add(self.aba_lab, text="Laboratório")
+        self.abas.add(self.aba_quiz, text="Praticar")
+        
         self.abas.pack(expand=True, fill="both", padx=10, pady=10)
 
-        self.construir_aba_perfil()
-        self.construir_aba_laboratorio()
         self.construir_aba_dicionario()
-        self.construir_aba_quiz()
         self.construir_aba_guia()
+        self.construir_aba_laboratorio()
+        self.construir_aba_quiz()
         
         self.aplicar_tema()
         self.mudar_idioma(config.GerenciadorIdiomas.idioma_ativo)
@@ -270,11 +296,10 @@ class TerereApp:
             if chave in t: var.set(t[chave])
             
         if hasattr(self, 'abas') and self.abas.winfo_exists():
-            self.abas.tab(self.aba_perfil, text=t.get("tab_profile", "Perfil"))
-            self.abas.tab(self.aba_lab, text=t.get("tab_lab", "Laboratório"))
             self.abas.tab(self.aba_dicionario, text=t.get("tab_dict", "Dicionário"))
-            self.abas.tab(self.aba_quiz, text=t.get("tab_quiz", "Praticar"))
             self.abas.tab(self.aba_guia, text=t.get("tab_guide", "Guia"))
+            self.abas.tab(self.aba_lab, text=t.get("tab_lab", "Laboratório"))
+            self.abas.tab(self.aba_quiz, text=t.get("tab_quiz", "Praticar"))
             
             if hasattr(self, 'tab_conj'):
                 self.tab_conj.heading("pessoa", text=t.get("col_pronoun", "Pessoa"))
@@ -313,6 +338,9 @@ class TerereApp:
             self.caixa_texto_guia.insert(tk.END, t.get("guide_text", ""))
             self.caixa_texto_guia.config(state="disabled")
             
+        if hasattr(self, 'botoes_lang'):
+            self.ordenar_botoes_idioma()
+            
         self.buscar_dicionario()
         self.atualizar_contadores()
         self.atualizar_ui_perfil()
@@ -320,10 +348,33 @@ class TerereApp:
             self.atualizar_placar_quiz()
             self.gerar_pergunta_quiz()
 
-    def construir_aba_perfil(self):
-        ttk.Label(self.aba_perfil, textvariable=self.vars_textos["prof_title"], style="Titulo.TLabel").pack(pady=20)
+    def ordenar_botoes_idioma(self):
+        ordem = {
+            "pt": ["es", "gn", "pt"],
+            "es": ["es", "gn", "pt"],
+            "gn": ["gn", "es", "pt"]
+        }
+        idioma_atual = config.GerenciadorIdiomas.idioma_ativo
+        for lang in ["pt", "es", "gn"]:
+            self.botoes_lang[lang].pack_forget()
+            
+        # No App os botões estão empacotados à esquerda ("left")
+        for lang in ordem[idioma_atual]:
+            self.botoes_lang[lang].pack(side="left", padx=2)
+
+    def abrir_janela_perfil(self):
+        janela_perfil = tk.Toplevel(self.root)
+        janela_perfil.title(self.vars_textos["tab_profile"].get())
+        janela_perfil.geometry("400x420")
+        janela_perfil.transient(self.root) 
+        janela_perfil.grab_set() 
         
-        frame_contas = ttk.Frame(self.aba_perfil)
+        cores = config.GerenciadorTemas.get()
+        janela_perfil.configure(bg=cores["bg"])
+
+        ttk.Label(janela_perfil, textvariable=self.vars_textos["prof_title"], style="Titulo.TLabel").pack(pady=20)
+        
+        frame_contas = ttk.Frame(janela_perfil)
         frame_contas.pack(pady=10)
         ttk.Label(frame_contas, textvariable=self.vars_textos["prof_sel_lbl"]).pack(side="left", padx=5)
         
@@ -333,23 +384,25 @@ class TerereApp:
         ttk.Button(frame_contas, textvariable=self.vars_textos["btn_load"], command=lambda: self.carregar_perfil_ui(self.combo_perfis.get())).pack(side="left", padx=2)
         ttk.Button(frame_contas, textvariable=self.vars_textos["btn_del"], command=self.excluir_perfil).pack(side="left", padx=2)
 
-        self.lbl_aviso_visitante = ttk.Label(self.aba_perfil, textvariable=self.vars_textos["prof_guest_warn"])
-        self.lbl_dias_ativos = ttk.Label(self.aba_perfil)
-        self.lbl_stats_quiz = ttk.Label(self.aba_perfil)
+        self.lbl_aviso_visitante = ttk.Label(janela_perfil, textvariable=self.vars_textos["prof_guest_warn"])
+        self.lbl_dias_ativos = ttk.Label(janela_perfil)
+        self.lbl_stats_quiz = ttk.Label(janela_perfil)
         
         self.lbl_aviso_visitante.pack(pady=10)
         self.lbl_dias_ativos.pack(pady=5)
         self.lbl_stats_quiz.pack(pady=5)
         
-        ttk.Button(self.aba_perfil, textvariable=self.vars_textos["btn_logout"], command=self.deslogar).pack(pady=25)
+        ttk.Button(janela_perfil, textvariable=self.vars_textos["btn_logout"], command=self.deslogar).pack(pady=25)
+        ttk.Button(janela_perfil, text="Fechar", command=janela_perfil.destroy).pack(pady=5)
         
         self.atualizar_combo_perfis()
         self.atualizar_ui_perfil()
 
     def atualizar_combo_perfis(self):
         perfis = self.perfil.listar_perfis()
-        self.combo_perfis.config(values=perfis + ["Visitante"])
-        self.combo_perfis.set(self.perfil.nome_atual if self.perfil.nome_atual in perfis else "Visitante")
+        if hasattr(self, 'combo_perfis') and self.combo_perfis.winfo_exists():
+            self.combo_perfis.config(values=perfis + ["Visitante"])
+            self.combo_perfis.set(self.perfil.nome_atual if self.perfil.nome_atual in perfis else "Visitante")
 
     def carregar_perfil_ui(self, nome: Optional[str]):
         if nome == "Visitante" or not nome: nome = None
@@ -358,6 +411,9 @@ class TerereApp:
         self.atualizar_ui_perfil()
 
     def excluir_perfil(self):
+        if not hasattr(self, 'combo_perfis') or not self.combo_perfis.winfo_exists():
+            return
+            
         nome = self.combo_perfis.get()
         if nome and nome != "Visitante":
             if messagebox.askyesno("Confirmar", f"Excluir '{nome}'?"):
@@ -367,6 +423,10 @@ class TerereApp:
 
     def atualizar_ui_perfil(self):
         t = config.GerenciadorIdiomas.TEXTOS[config.GerenciadorIdiomas.idioma_ativo]
+        
+        if not hasattr(self, 'lbl_aviso_visitante') or not self.lbl_aviso_visitante.winfo_exists():
+            return
+
         if self.perfil.nome_atual:
             self.lbl_aviso_visitante.pack_forget()
             dias = len(self.perfil.dados["dias_ativos"])
@@ -487,8 +547,9 @@ class TerereApp:
         frame_base.pack(pady=5)
         ttk.Label(frame_base, textvariable=self.vars_textos["lbl_base_estudo"]).pack(side="left", padx=5)
         
-        ttk.Radiobutton(frame_base, textvariable=self.vars_textos["rad_gn_pt"], variable=self.var_dic_lang, value="pt", command=self.trocar_dicionario).pack(side="left", padx=5)
+        # Invertido: 'es' vem antes de 'pt' na ordem visual
         ttk.Radiobutton(frame_base, textvariable=self.vars_textos["rad_gn_es"], variable=self.var_dic_lang, value="es", command=self.trocar_dicionario).pack(side="left", padx=5)
+        ttk.Radiobutton(frame_base, textvariable=self.vars_textos["rad_gn_pt"], variable=self.var_dic_lang, value="pt", command=self.trocar_dicionario).pack(side="left", padx=5)
 
         frame_busca = ttk.Frame(self.aba_dicionario)
         frame_busca.pack(fill="x", padx=10, pady=(5,0))
@@ -622,8 +683,10 @@ class TerereApp:
         
         self.frame_quiz_lang = ttk.Frame(self.aba_quiz)
         ttk.Label(self.frame_quiz_lang, textvariable=self.vars_textos["lbl_base_estudo"]).pack(side="left", padx=5)
-        ttk.Radiobutton(self.frame_quiz_lang, textvariable=self.vars_textos["rad_gn_pt"], variable=self.var_dic_lang, value="pt", command=self.trocar_dicionario).pack(side="left", padx=5)
+        
+        # Invertido: 'es' vem antes de 'pt' na ordem visual
         ttk.Radiobutton(self.frame_quiz_lang, textvariable=self.vars_textos["rad_gn_es"], variable=self.var_dic_lang, value="es", command=self.trocar_dicionario).pack(side="left", padx=5)
+        ttk.Radiobutton(self.frame_quiz_lang, textvariable=self.vars_textos["rad_gn_pt"], variable=self.var_dic_lang, value="pt", command=self.trocar_dicionario).pack(side="left", padx=5)
         
         if config.GerenciadorIdiomas.idioma_ativo == "gn":
             self.frame_quiz_lang.pack(pady=5)
