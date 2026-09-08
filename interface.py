@@ -30,7 +30,6 @@ class TelaLogin:
         self.btn_theme = tk.Button(frame_top, textvariable=self.var_btn_theme, command=self.alternar_tema)
         self.btn_theme.pack(side="left", padx=5)
 
-        # Dicionário para armazenar as referências dos botões de idioma
         self.botoes_lang = {}
         for lang in ["pt", "es", "gn"]:
             btn = tk.Button(frame_top, text=lang.upper(), command=lambda l=lang: self.mudar_idioma(l), width=4)
@@ -86,23 +85,19 @@ class TelaLogin:
         self.var_btn_theme.set(t.get("btn_theme", "Tema"))
         self.var_dev_by.set(t.get("dev_by", "Desenvolvido por L3nascripts"))
         
-        # Chama a reordenação dos botões de idioma
         self.ordenar_botoes_idioma()
 
     def ordenar_botoes_idioma(self):
-        # Ordem alfabética baseada na tradução dos nomes dos idiomas
         ordem = {
-            "pt": ["es", "gn", "pt"], # Espanhol, Guarani, Português
-            "es": ["es", "gn", "pt"], # Español, Guaraní, Portugués
-            "gn": ["gn", "es", "pt"]  # Avañe'ẽ, Karaiñe'ẽ, Poytugañe'ẽ
+            "pt": ["es", "gn", "pt"], 
+            "es": ["es", "gn", "pt"], 
+            "gn": ["gn", "es", "pt"]  
         }
         idioma_atual = config.GerenciadorIdiomas.idioma_ativo
         
-        # Remove todos da interface temporariamente
         for lang in ["pt", "es", "gn"]:
             self.botoes_lang[lang].pack_forget()
         
-        # Como estão ancorados à direita, empacotamos na ordem reversa para que a esquerda-direita visual fique correta
         for lang in reversed(ordem[idioma_atual]):
             self.botoes_lang[lang].pack(side="right", padx=2)
 
@@ -167,7 +162,6 @@ class TerereApp:
         
         ttk.Label(frame_top, textvariable=self.vars_textos["lbl_lang"], font=("Helvetica", 11, "bold")).pack(side="left", padx=(0,5))
         
-        # Dicionário para armazenar as referências dos botões de idioma
         self.botoes_lang = {}
         for lang in ["pt", "es", "gn"]:
             btn = ttk.Button(frame_top, text=lang.upper(), command=lambda l=lang: self.mudar_idioma(l), width=4)
@@ -358,7 +352,6 @@ class TerereApp:
         for lang in ["pt", "es", "gn"]:
             self.botoes_lang[lang].pack_forget()
             
-        # No App os botões estão empacotados à esquerda ("left")
         for lang in ordem[idioma_atual]:
             self.botoes_lang[lang].pack(side="left", padx=2)
 
@@ -547,7 +540,6 @@ class TerereApp:
         frame_base.pack(pady=5)
         ttk.Label(frame_base, textvariable=self.vars_textos["lbl_base_estudo"]).pack(side="left", padx=5)
         
-        # Invertido: 'es' vem antes de 'pt' na ordem visual
         ttk.Radiobutton(frame_base, textvariable=self.vars_textos["rad_gn_es"], variable=self.var_dic_lang, value="es", command=self.trocar_dicionario).pack(side="left", padx=5)
         ttk.Radiobutton(frame_base, textvariable=self.vars_textos["rad_gn_pt"], variable=self.var_dic_lang, value="pt", command=self.trocar_dicionario).pack(side="left", padx=5)
 
@@ -576,20 +568,44 @@ class TerereApp:
         self.frame_editor = ttk.LabelFrame(self.aba_dicionario, text="Detalhes e Edição")
         self.frame_editor.pack(fill="x", padx=10, pady=5)
         
-        f1 = ttk.Frame(self.frame_editor); f1.pack(fill="x", pady=2)
-        self.ed_gn = tk.Entry(f1, width=15, font=("Helvetica", 11)); self.ed_gn.pack(side="left", padx=5)
-        self.ed_tr = tk.Entry(f1, width=25, font=("Helvetica", 11)); self.ed_tr.pack(side="left", padx=5)
-        self.ed_tipo = ttk.Combobox(f1, values=["Verbo", "Substantivo", "Adjetivo", "Adverbio", "Indefinido", "Outros"], width=12); self.ed_tipo.pack(side="left", padx=5)
+        f1 = ttk.Frame(self.frame_editor)
+        f1.pack(fill="x", pady=2)
         
-        f2 = ttk.Frame(self.frame_editor); f2.pack(fill="x", pady=2)
-        ttk.Label(f2, textvariable=self.vars_textos["lbl_ex_gn"]).pack(side="left", padx=5)
-        self.ed_ex_gn = tk.Entry(f2, width=35, font=("Helvetica", 11)); self.ed_ex_gn.pack(side="left", padx=5)
-        ttk.Label(f2, textvariable=self.vars_textos["lbl_ex_es"]).pack(side="left", padx=5)
-        self.ed_ex_pt = tk.Entry(f2, width=35, font=("Helvetica", 11)); self.ed_ex_pt.pack(side="left", padx=5)
+        ttk.Label(f1, text="Guarani*:").pack(side="left", padx=(5, 0))
+        self.ed_gn = tk.Entry(f1, width=15, font=("Helvetica", 11)); self.ed_gn.pack(side="left", padx=5)
+        
+        ttk.Label(f1, text="Tradução*:").pack(side="left", padx=(5, 0))
+        self.ed_tr = tk.Entry(f1, width=25, font=("Helvetica", 11)); self.ed_tr.pack(side="left", padx=5)
+        
+        ttk.Label(f1, text="Classe:").pack(side="left", padx=(5, 0))
+        self.ed_tipo = ttk.Combobox(f1, values=["Verbo", "Substantivo", "Adjetivo", "Adverbio", "Indefinido", "Outros"], width=12)
+        self.ed_tipo.pack(side="left", padx=5)
+        
+        self.f2_exemplos = ttk.Frame(self.frame_editor)
+        ttk.Label(self.f2_exemplos, textvariable=self.vars_textos["lbl_ex_gn"]).pack(side="left", padx=5)
+        self.ed_ex_gn = tk.Entry(self.f2_exemplos, width=35, font=("Helvetica", 11))
+        self.ed_ex_gn.pack(side="left", padx=5)
+        
+        ttk.Label(self.f2_exemplos, textvariable=self.vars_textos["lbl_ex_es"]).pack(side="left", padx=5)
+        self.ed_ex_pt = tk.Entry(self.f2_exemplos, width=35, font=("Helvetica", 11))
+        self.ed_ex_pt.pack(side="left", padx=5)
 
-        f3 = ttk.Frame(self.frame_editor); f3.pack(fill="x", pady=2)
-        ttk.Button(f3, textvariable=self.vars_textos["ed_save"], command=self.salvar_palavra).pack(side="left", padx=5)
-        ttk.Button(f3, textvariable=self.vars_textos["ed_del_word"], command=self.excluir_palavra).pack(side="left", padx=5)
+        self.var_btn_toggle = tk.StringVar(value="+ Adicionar frases de exemplo (Opcional)")
+        self.btn_toggle_ex = ttk.Button(self.frame_editor, textvariable=self.var_btn_toggle, command=self.toggle_exemplos)
+        self.btn_toggle_ex.pack(fill="x", padx=5, pady=2)
+
+        self.f3_botoes = ttk.Frame(self.frame_editor)
+        self.f3_botoes.pack(fill="x", pady=2)
+        ttk.Button(self.f3_botoes, textvariable=self.vars_textos["ed_save"], command=self.salvar_palavra).pack(side="left", padx=5)
+        ttk.Button(self.f3_botoes, textvariable=self.vars_textos["ed_del_word"], command=self.excluir_palavra).pack(side="left", padx=5)
+
+    def toggle_exemplos(self):
+        if self.f2_exemplos.winfo_ismapped():
+            self.f2_exemplos.pack_forget()
+            self.var_btn_toggle.set("+ Adicionar frases de exemplo (Opcional)")
+        else:
+            self.f2_exemplos.pack(fill="x", pady=2, before=self.btn_toggle_ex)
+            self.var_btn_toggle.set("- Ocultar frases de exemplo")
 
     def trocar_dicionario(self):
         idioma_alvo = self.var_dic_lang.get()
@@ -654,8 +670,14 @@ class TerereApp:
             self.ed_gn.insert(0, raiz)
             self.ed_tr.insert(0, dados.get("traduccion", ""))
             self.ed_tipo.set(dados.get("tipo", "Outros"))
-            self.ed_ex_gn.insert(0, dados.get("ex_gn", ""))
-            self.ed_ex_pt.insert(0, dados.get("ex_pt", ""))
+            
+            ex_gn = dados.get("ex_gn", "")
+            ex_pt = dados.get("ex_pt", "")
+            self.ed_ex_gn.insert(0, ex_gn)
+            self.ed_ex_pt.insert(0, ex_pt)
+            
+            if (ex_gn or ex_pt) and not self.f2_exemplos.winfo_ismapped():
+                self.toggle_exemplos()
 
     def salvar_palavra(self):
         gn, tr, tp = self.ed_gn.get().strip().lower(), self.ed_tr.get().strip(), self.ed_tipo.get().strip()
@@ -684,7 +706,6 @@ class TerereApp:
         self.frame_quiz_lang = ttk.Frame(self.aba_quiz)
         ttk.Label(self.frame_quiz_lang, textvariable=self.vars_textos["lbl_base_estudo"]).pack(side="left", padx=5)
         
-        # Invertido: 'es' vem antes de 'pt' na ordem visual
         ttk.Radiobutton(self.frame_quiz_lang, textvariable=self.vars_textos["rad_gn_es"], variable=self.var_dic_lang, value="es", command=self.trocar_dicionario).pack(side="left", padx=5)
         ttk.Radiobutton(self.frame_quiz_lang, textvariable=self.vars_textos["rad_gn_pt"], variable=self.var_dic_lang, value="pt", command=self.trocar_dicionario).pack(side="left", padx=5)
         
